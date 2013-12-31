@@ -15,8 +15,11 @@
 #
 # This class file is not called directly
 class ldap::server::package(
-  $ssl = undef
+  $ssl = undef,
 ) {
+  package { $ldap::params::openldap_packages:
+    ensure => present,
+  }
 
   # Manage the User and Group
   user { $ldap::params::lp_daemon_user:
@@ -28,14 +31,11 @@ class ldap::server::package(
     shell   => '/bin/false',
     before  => Package[$ldap::params::openldap_packages],
   }
+
   group { $ldap::params::lp_daemon_user:
     ensure => 'present',
     gid    => $ldap::params::lp_daemon_gid,
     before => Package[$ldap::params::openldap_packages],
-  }
-
-  package { $ldap::params::openldap_packages:
-    ensure => present,
   }
 
   ## This section modifies the /etc/default file to allow for

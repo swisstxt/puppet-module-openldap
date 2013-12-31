@@ -19,16 +19,16 @@
 #
 # Sample Usage:
 # Server Configuration:
-# ldap::define::schema { 'websages':
+# ldap::server::schema { 'websages':
 #   ensure => 'present',
 #   source => 'puppet:///modules/ldap/schema/websages.schema',
 # }
-define ldap::define::schema(
-  $ensure = 'present',
+define ldap::server::schema(
+  $ensure = present,
   $source = undef,
 ) {
+  include ::ldap::params
 
-  include ldap::params
   File {
     owner   => 'root',
     group   => $ldap::params::lp_daemon_group,

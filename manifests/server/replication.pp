@@ -11,13 +11,12 @@
 # Sample Usage:
 #
 
-define ldap::define::replication (
-  $ensure = 'present',
+define ldap::server::replication (
+  $ensure = present,
   $provider = false,
   $consumer = false,
 ) {
-
-  include ldap::params
+  include ::ldap::params
 
   File {
     owner   => 'root',
@@ -26,13 +25,11 @@ define ldap::define::replication (
     require => Class['ldap::server::openldap::base'],
   }
 
-  $directory_ensure = $ensure ? {
-    'present' => 'directory',
-    'absent'  => 'absent',
-  }
-
   file { "${ldap::params::lp_openldap_var_dir}/${name}/accesslog":
-    ensure => $directory_ensure,
+    ensure => $ensure ? {
+      present =>, directory,
+      absent  => absent,
+    },
     mode   => '0770',
     owner  => $ldap::params::lp_daemon_user,
   }

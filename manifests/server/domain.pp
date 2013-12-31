@@ -22,12 +22,12 @@
 #
 # Sample Usage:
 # Server Configuration:
-# ldap::define::domain {'puppetlabs.test':
-#   basedn   => 'dc=puppetlabs,dc=test',
-#   rootdn   => 'cn=admin',
-#   rootpw   => 'test',
+# ldap::server::domain {'puppetlabs.test':
+#   basedn  => 'dc=puppetlabs,dc=test',
+#   rootdn  => 'cn=admin',
+#   rootpw  => 'test',
 # }
-define ldap::define::domain(
+define ldap::server::domain(
   $ensure = 'present',
   $basedn,
   $rootdn,
@@ -35,18 +35,14 @@ define ldap::define::domain(
   $readdn = undef,
   $readpw = undef,
   $anonymous_read = true,
-){
-  include ldap::params
+) {
+  include ::ldap::params
+
   File {
     owner   => 'root',
     group   => $ldap::params::lp_daemon_group,
     require => Class['ldap::server::config'],
     before  => Class['ldap::server::rebuild'],
-  }
-
-  $directory_ensure = $ensure ? {
-    'present' => 'directory',
-    'absent'  => 'absent',
   }
 
   # Setup the 'include' definition in part of the file fragment
@@ -72,7 +68,10 @@ define ldap::define::domain(
 
   # Create a Database Directory for the LDAP Server to live in
   file { "${ldap::params::lp_openldap_var_dir}/${name}":
-    ensure  => $directory_ensure,
+    ensure  => $ensure ? {
+      present => directory,
+      absent  => absent,
+    },
     owner   => $ldap::params::lp_daemon_user,
     group   => $ldap::params::lp_daemon_group,
     recurse => true,

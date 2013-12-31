@@ -23,7 +23,7 @@ class ldap::server::config (
   $rootdn    = undef,
   $rootpw    = undef,
 ) {
-  include 'ldap::params'
+  include ::ldap::params
 
   # Give me dat password to go with all the things
   if $rootdn { validate_string($rootpw) }

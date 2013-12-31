@@ -15,7 +15,7 @@
 # This class file is not called directly
 class ldap::server::service {
   service { $ldap::params::lp_openldap_service:
-    ensure     => 'running',
+    ensure     => running,
     enable     => true,
     hasstatus  => true,
     hasrestart => true,
