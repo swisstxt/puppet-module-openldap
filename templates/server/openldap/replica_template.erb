@@ -3,3 +3,15 @@
 #replica host=ldap-1.example.com:389 starttls=critical
 #     bindmethod=sasl saslmech=GSSAPI
 #     authcId=host/ldap-master.example.com@EXAMPLE.COM
+syncrepl rid=123
+	provider=ldap://provider.example.com:389
+	type=refreshOnly
+	interval=01:00:00:00
+	searchbase="dc=example,dc=com"
+	filter="(objectClass=organizationalPerson)"
+	scope=sub
+	attrs="cn,sn,ou,telephoneNumber,title,l"
+	schemachecking=off
+	bindmethod=simple
+	binddn="cn=syncuser,dc=example,dc=com"
+	credentials=secret

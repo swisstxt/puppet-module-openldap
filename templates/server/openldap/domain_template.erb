@@ -24,5 +24,8 @@ access to attrs=userPassword
 access to *
     by self write
     by dn.base="<%= @rootdn %>,<%= @basedn %>" write
-    by * read
+<%- if @readdn -%>
+    by dn.base="<%= @readdn %>,<%= @basedn %>" read
+<%- end -%>
+    by * <%= @anonymous_read ? 'read' : 'none' %>
 

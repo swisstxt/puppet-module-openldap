@@ -31,7 +31,10 @@ define ldap::define::domain(
   $ensure = 'present',
   $basedn,
   $rootdn,
-  $rootpw
+  $rootpw,
+  $readdn = undef,
+  $readpw = undef,
+  $anonymous_read = true,
 ){
   include ldap::params
   File {

@@ -1,4 +1,3 @@
-# example.org
 dn: <%= @basedn %>
 objectClass: top
 objectClass: dcObject
@@ -12,23 +11,23 @@ roleOccupant: <%= @basedn %>
 objectClass: simpleSecurityObject
 objectClass: organizationalRole
 cn: <%= @rootdn.gsub!(/^(..)=/, '') %>
-description: LDAP administrator
+description: LDAP Manager
 userPassword: <%= @rootpw %>
 
-dn: ou=people,<%= @basedn %>
-objectClass: organizationalUnit
-ou: people
+<% if @readdn -%>
+dn: <%= @readdn %>,<%= @basedn %>
+roleOccupant: <%= @basedn %>
+objectClass: simpleSecurityObject
+objectClass: organizationalRole
+cn: <%= @readdn.gsub!(/^(..)=/, '') %>
+description: LDAP Reader
+userPassword: <%= @readpw %>
+<% end -%>
 
-# Group, example.org
+dn: ou=users,<%= @basedn %>
+objectClass: organizationalUnit
+ou: uses
+
 dn: ou=groups,<%= @basedn %>
 objectClass: organizationalUnit
 ou: groups
-
-dn: uid=test,ou=people,<%= @basedn %>
-objectClass: inetOrgPerson
-uid: test
-cn: I. Test User
-cn: Test User
-surname: User
-mail: test@example.com
-userPassword: pass

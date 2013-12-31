@@ -11,9 +11,10 @@
 # Sample Usage:
 #
 
-## UNDER CONSTRUCTION
 define ldap::define::replication (
-  $ensure = 'present'
+  $ensure = 'present',
+  $provider = false,
+  $consumer = false,
 ) {
 
   include ldap::params
