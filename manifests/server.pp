@@ -22,11 +22,11 @@ class ldap::server(
   $rootdn    = undef,
   $rootpw    = undef,
 ) {
-  anchor { 'ldap::server::begin': }
+  anchor { 'ldap::server::begin': 
+  } ->
   class { 'ldap::server::package':
     ssl     => $ssl,
-    require => Anchor['ldap::server::begin'],
-  }
+  } ->
   class { 'ldap::server::config':
     ssl       => $ssl,
     ssl_ca    => $ssl_ca,
@@ -35,15 +35,11 @@ class ldap::server(
     cn_config => $cn_config,
     rootdn    => $rootdn,
     rootpw    => $rootpw,
-    require   => Class['ldap::server::package'],
-  }
+  } ->
   class { 'ldap::server::rebuild':
-    require => Class['ldap::server::config'],
-  }
+  } ->
   class { 'ldap::server::service':
-    require => Class['ldap::server::rebuild'],
-    before  => Anchor['ldap::server::end'],
-  }
+  } ->
   anchor { 'ldap::server::end': }
 }
 
