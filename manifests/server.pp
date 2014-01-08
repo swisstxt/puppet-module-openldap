@@ -12,7 +12,7 @@
 #
 # Sample Usage:
 #
-# This class file is not called directly.
+# This class file is not used directly.
 class ldap::server(
   $ssl       = false,
   $ssl_ca    = '',
@@ -42,4 +42,3 @@ class ldap::server(
   } ->
   anchor { 'ldap::server::end': }
 }
-

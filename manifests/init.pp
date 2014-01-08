@@ -3,9 +3,9 @@
 # This module manages LDAP Server and Clients.
 #
 # Parameters:
-# *client* - Binary Flag (true|false) to configure an LDAP Client
-# *server* - Binary Flag (true|false) to configure an LDAP Server
-# *ssl*         - (true|false) - enable SSL Support. *IN DEVELOPMENT*
+# *client* - Boolean flag (true|false) to configure an LDAP Client
+# *server* - Boolean flag (true|false) to configure an LDAP Server
+# *ssl*    - Boolean flag (true|false) to enable SSL Support
 #
 # Actions:
 #
@@ -65,15 +65,15 @@ class ldap(
   include stdlib
   include ldap::params
 
-  # Take advantage of the Anchor Pattern.
-  anchor { 'ldap::begin': }
-  -> anchor { 'ldap::begin::client': }
-  -> anchor { 'ldap::end::client': }
-  -> anchor { 'ldap::begin::server': }
-  -> anchor { 'ldap::end::server': }
-  -> anchor { 'ldap::end': }
+  # ensure relationships of contained classes
+  anchor { 'ldap::begin': } ->
+  anchor { 'ldap::begin::client': } ->
+  anchor { 'ldap::end::client': } ->
+  anchor { 'ldap::begin::server': } ->
+  anchor { 'ldap::end::server': } ->
+  anchor { 'ldap::end': }
 
-  # Define Client Specific Information
+  # Client Specific Information
   if $client {
     class { 'ldap::client':
       ensure  => 'present',
@@ -83,7 +83,7 @@ class ldap(
     }
   }
 
-  # Define Server Specific Information
+  # Server Specific Information
   if $server {
     class { 'ldap::server':
       ssl       => $ssl,
