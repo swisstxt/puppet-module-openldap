@@ -1,4 +1,4 @@
-# Define: ldap::server::openldap::domain
+# Define: openldap::server::domain
 #
 # This custom definition sets up all of the necessary configuration
 # Files to bootstrap a LDAP tree. This uses the File-Fragment
@@ -22,83 +22,53 @@
 #
 # Sample Usage:
 # Server Configuration:
-# ldap::server::domain {'puppetlabs.test':
+# openldap::server::domain {'puppetlabs.test':
 #   basedn  => 'dc=puppetlabs,dc=test',
 #   rootdn  => 'cn=admin',
 #   rootpw  => 'test',
 # }
-define ldap::server::domain(
-  $ensure = 'present',
+define openldap::server::domain(
   $basedn,
   $rootdn,
   $rootpw,
   $readdn = undef,
   $readpw = undef,
+  $syncdn = undef,
+  $syncpw = undef,
   $anonymous_read = true,
 ) {
-  include ::ldap::params
-
   File {
     owner   => 'root',
-    group   => $ldap::params::lp_daemon_group,
-    require => Class['ldap::server::config'],
-    before  => Class['ldap::server::rebuild'],
+    group   => $::openldap::params::group,
+    mode    => '0640',
+    require => Package[$::openldap::params::package],
   }
 
-  # Setup the 'include' definition in part of the file fragment
-  # to include the definition in OpenLDAP configuration
-  file { "${ldap::params::lp_tmp_dir}/domains.d/${name}.conf":
-    ensure  => $ensure,
-    content => "include ${ldap::params::lp_openldap_conf_dir}/domains/${name}.conf\n",
-    notify  => Class['ldap::server::rebuild'],
-  }
-
-  # Setup the *actual* configuration file for OpenLDAP
-  file { "${ldap::params::lp_openldap_conf_dir}/domains/${name}.conf":
-    ensure  => $ensure,
-    content => template('ldap/server/openldap/domain_template.erb'),
-    notify  => Class['ldap::server::service'],
-  }
-
-  # Create a blank ACL file for later reference.
-  file { "${ldap::params::lp_openldap_conf_dir}/domains/${name}-acl.conf":
-    ensure  => $ensure,
-    notify  => Class['ldap::server::service'],
-  }
-
-  # Create a Database Directory for the LDAP Server to live in
-  file { "${ldap::params::lp_openldap_var_dir}/${name}":
-    ensure  => $ensure ? {
-      present => directory,
-      absent  => absent,
-    },
-    owner   => $ldap::params::lp_daemon_user,
-    group   => $ldap::params::lp_daemon_group,
+  concat::fragment { "openldap-domain-${name}":
+    target  => 'openldap-domains',
+    content => template('openldap/server/domain.conf.erb'),
+    order   => "${name}-10",
+    notify  => Service[$::openldap::params::service],
+  } ->
+  file { "${::openldap::params::vardir}/${name}":
+    ensure  => directory,
+    owner   => $::openldap::params::user,
     recurse => true,
-  }
-
-  ## Setup Initial OpenLDAP Database
-  file { "${ldap::params::lp_openldap_var_dir}/${name}/DB_CONFIG":
-    ensure  => $ensure,
-    mode    => '0660',
-    content => template('ldap/server/openldap/DB_CONFIG.erb'),
-  }
-
-  file { "${ldap::params::lp_openldap_var_dir}/${name}/base.ldif":
-    ensure  => $ensure,
-    owner   => $ldap::params::lp_daemon_user,
-    content => template('ldap/server/openldap/base.ldif.erb'),
-    notify  => Exec["bootstrap-ldap-${name}"],
-  }
-
-  exec { "bootstrap-ldap-${name}":
-    command   => "slapadd -b \"${basedn}\" -v -l ${ldap::params::lp_openldap_var_dir}/${name}/base.ldif",
-    path      => '/bin:/sbin:/usr/bin:/usr/sbin',
-    user      =>  $ldap::params::lp_daemon_user,
-    group     =>  $ldap::params::lp_daemon_group,
-    logoutput => true,
-    creates   => "${ldap::params::lp_openldap_var_dir}/${name}/id2entry.bdb",
-    require   => Class['ldap::server::rebuild'],
-    before    => Class['ldap::server::service'],
+  } ->
+  file { "${::openldap::params::vardir}/${name}/DB_CONFIG":
+    content => template('openldap/server/DB_CONFIG.erb'),
+    owner   => $::openldap::params::user,
+    notify  => Service[$::openldap::params::service],
+  } ->
+  file { "${::openldap::params::vardir}/${name}/base.ldif":
+    content => template('openldap/server/base.ldif.erb'),
+    owner   => $::openldap::params::user,
+  } ~>
+  exec { "openldap-bootstrap-${name}":
+    command   => "/usr/sbin/slapadd -b '${basedn}' -v -l ${::openldap::params::vardir}/${name}/base.ldif",
+    user      =>  $::openldap::params::user,
+    group     =>  $::openldap::params::group,
+    creates   => "${::openldap::params::vardir}/${name}/id2entry.bdb",
+    before    => Service[$::openldap::params::service],
   }
 }

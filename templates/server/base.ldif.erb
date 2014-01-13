@@ -24,6 +24,16 @@ description: LDAP Reader
 userPassword: <%= @readpw %>
 <% end -%>
 
+<% if @syncdn -%>
+dn: <%= @syncdn %>,<%= @syncdn %>
+roleOccupant: <%= @basedn %>
+objectClass: simpleSecurityObject
+objectClass: organizationalRole
+cn: <%= @syncdn.gsub!(/^(..)=/, '') %>
+description: LDAP Sync
+userPassword: <%= @syncpw %>
+<% end -%>
+
 dn: ou=users,<%= @basedn %>
 objectClass: organizationalUnit
 ou: uses

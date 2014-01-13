@@ -12,23 +12,18 @@
 #
 # Sample Usage:
 #
-# This class file is not called directly.
-class ldap::client(
-  $ensure = 'present',
-  $ssl = false
+class openldap::client(
+  $base      = undef,
+  $uri       = undef,
+  $ssl       = false,
+  $ssl_ca    = undef,
+  $ssl_cert  = undef,
+  $ssl_key   = undef,
 ) {
-
-  class { 'ldap::client::package':
-    ensure => $ensure,
-  }
-  class { 'ldap::client::base':
-    ensure    => $ensure,
-    ssl       => $ssl,
-  }
-  class { 'ldap::client::service':
-    subscribe => [
-      Class['ldap::client::base'],
-      Class['ldap::client::package'],
-    ],
+  package { $openldap::client_package:
+    ensure => present,
+  } ->
+  file { '/etc/openldap/ldap.conf':
+    content => template('openldap/client/ldap.conf.erb'),
   }
 }

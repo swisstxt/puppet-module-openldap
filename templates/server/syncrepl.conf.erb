@@ -1,0 +1,5 @@
+syncrepl rid=<%= @rid %>
+<% @options.each do |key, value| -%>
+         <%= key %>=<%= value %>
+<% end -%>
+<%= 'mirror_mode on' if @mirror_mode %>

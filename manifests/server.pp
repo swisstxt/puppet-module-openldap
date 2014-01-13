@@ -1,10 +1,8 @@
-# Class: ldap::server
+# Class: openldap::server
 #
-# This module manages LDAP Server Configuration
+# This class manages OpenLDAP server cnfiguration
 #
 # Parameters:
-#
-# There are no default parameters for this class.
 #
 # Actions:
 #
@@ -12,33 +10,49 @@
 #
 # Sample Usage:
 #
-# This class file is not used directly.
-class ldap::server(
-  $ssl       = false,
-  $ssl_ca    = '',
-  $ssl_cert  = '',
-  $ssl_key   = '',
-  $cn_config = undef,
-  $rootdn    = undef,
-  $rootpw    = undef,
+class openldap::server(
+  $ssl      = false,
+  $ssl_ca   = undef,
+  $ssl_cert = undef,
+  $ssl_key  = undef,
+  $use_olc  = undef,
+  $rootdn   = undef,
+  $rootpw   = undef,
 ) {
-  anchor { 'ldap::server::begin': 
+  File {
+    owner => root,
+    group => $::openldap::params::group,
+    mode  => '0640',
+  }
+  Concat {
+    force => true,
+    owner => root,
+    group => $::openldap::params::group,
+    mode  => '0640',
+  }
+
+  package { $::openldap::params::package:
+    ensure => present,
+  } -> 
+  file { "${::openldap::params::confdir}/slapd.conf":
+    content => template('openldap/server/slapd.conf.erb'),
   } ->
-  class { 'ldap::server::package':
-    ssl     => $ssl,
+  concat { 'openldap-schemas':
+    path => "${::openldap::params::confdir}/schemas.conf",
   } ->
-  class { 'ldap::server::config':
-    ssl       => $ssl,
-    ssl_ca    => $ssl_ca,
-    ssl_cert  => $ssl_cert,
-    ssl_key   => $ssl_key,
-    cn_config => $cn_config,
-    rootdn    => $rootdn,
-    rootpw    => $rootpw,
+  concat { 'openldap-accesses':
+    path => "${::openldap::params::confdir}/accesses.conf",
   } ->
-  class { 'ldap::server::rebuild':
+  concat { 'openldap-domains':
+    path => "${::openldap::params::confdir}/domains.conf",
   } ->
-  class { 'ldap::server::service':
+  file { "${::openldap::params::confdir}/schema":
+    ensure  => directory,
   } ->
-  anchor { 'ldap::server::end': }
+  service { $::openldap::params::service:
+    ensure     => running,
+    enable     => true,
+    hasstatus  => true,
+    hasrestart => true,
+  }
 }

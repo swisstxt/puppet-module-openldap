@@ -1,4 +1,4 @@
-# Class: ldap::params
+# Class: openldap::params
 #
 # This module manages LDAP paramaters
 #
@@ -12,107 +12,57 @@
 #
 # Sample Usage:
 #
-# This class file is not called directly
-class ldap::params {
-  if $::kernel != 'Linux' {
-      fail("${module_name} unsupported for ${::kernel}.")
+class openldap::params {
+  # client
+  $client_sizelimit = 12
+  $client_timelimit = 15
+  $client_deref = 'never'
+
+  $client_package = $::osfamily ? {
+    'Debian' => 'ldap-utils',
+    default  => 'openldap-clients',
   }
 
-  # Cross-platform compatible variables.
-  $lp_tmp_dir               = '/tmp/openldap'
-  $lp_sizelimit             = 12
-  $lp_timelimit             = 15
-  $lp_deref                 = 'never'
-  $lp_openldap_allow_ldapv2 = false
-  $lp_openldap_loglevel     = '8'
-  $lp_openldap_sizelimit    = '5000'
-  $lp_openldap_tool_threads = '1'
-  $lp_openldap_db_type      = 'bdb'
+  # server
+  $allow_bind_v2 = false
+  $loglevel = 8
+  $sizelimit = 5000
+  $tool_threads = 1
+  $database = 'bdb'
 
-  # Defaults with OS-specific overrides.
-  $lp_openldap_var_dir = $::operatingsystem ? {
-    'Debian'    => '/var/lib/slapd',
-    default     => '/var/lib/ldap',
+  $user = $::osfamily ? {
+    'Debian' => 'openldap',
+    default  => 'ldap',
   }
-
-  # Defaults with OS family-specific overrides.
-  $lp_daemon_user = $::osfamily ? {
-    'Debian'    => 'openldap',
-    default     => 'ldap',
+  $group = $::osfamily ? {
+    'Debian' => 'openldap',
+    default  => 'ldap',
   }
-  $lp_daemon_group = $::osfamily ? {
-    'Debian'    => 'openldap',
-    default     => 'ldap',
+  $confdir = $::osfamily ? {
+    'Debian' => '/etc/ldap',
+    default  => '/etc/openldap',
   }
-  $lp_daemon_uid = $::osfamily ? {
-    default     => '55',
+  $vardir = $::osfamily ? {
+    'Debian' => '/var/lib/slapd',
+    default  => '/var/lib/ldap',
   }
-  $lp_daemon_gid = $::osfamily ? {
-    default     => '55',
-  }
-  $lp_nsswitch = $::osfamily ? {
-    'Debian'    => 'puppet:///modules/ldap/client/nsswitch/nsswitch.conf.debian',
-    default     => 'puppet:///modules/ldap/client/nsswitch/nsswitch.conf.redhat',
-  }
-  $lp_openldap_run_dir = $::osfamily ? {
+  $rundir = $::osfamily ? {
     'Debian' => '/var/run/slapd',
     default  => '/var/run/openldap',
   }
-  $lp_openldap_conf_dir = $::osfamily ? {
-    'Debian'    => '/etc/ldap',
-    default     => '/etc/openldap',
+  $modulepath = $::osfamily ? {
+    'Debian' => '/usr/lib/ldap',
+    default  => false,
   }
-  $lp_openldap_modulepath = $::osfamily ? {
-    'Debian'    => '/usr/lib/ldap',
-    default     => 'UNDEF',
+  $package = $::osfamily ? {
+    'Debian' => 'slapd',
+    'Redhat' => 'openldap-servers',
   }
-
-  # Service name and packages need to be selected with more complex logic.
-  case $::osfamily {
-    'Debian': {
-      $lp_openldap_service = 'slapd'
-      case $::lsbdistcodename {
-        '': {
-          fail("${module_name} needs LSB facts to install on ${::operatingsystem}.")
-        }
-        lenny: {
-          $openldap_packages = [
-            'odbcinst1debian1', 'unixodbc', 'psmisc',
-            'libsasl2-modules', 'libslp1', 'libltdl3',
-            'libdb4.2',
-          ]
-        }
-        /precise|wheezy/: {
-          $openldap_packages = ['slapd', 'ldap-utils', 'libperl5.14']
-        }
-        default: {
-          $openldap_packages = ['slapd', 'ldap-utils', 'libperl5.10']
-          $openldap_client_packages = [
-            'libnss-ldap', 'nscd', 'libpam-ldap', 'ldap-utils'
-          ]
-        }
-      }
-    } 'RedHat': {
-      case $::operatingsystemrelease {
-        /^5\./: {
-          $lp_openldap_service = 'ldap'
-        } /^6\./: {
-          $lp_openldap_service = 'slapd'
-        }
-      }
-      $openldap_packages = [
-        'openldap', 'openldap-servers', 'openldap-clients'
-      ]
-      $openldap_client_packages =  [
-        'openldap', 'openldap-clients', 'nss_ldap'
-      ]
-    } 'Suse': {
-      $openldap_packages = ['openldap2', 'libltdl7', 'openldap2-back-meta']
-      $openldap_client_packages = [
-        'pam_ldap', 'nss_ldap', 'openldap2-client'
-      ]
-    } default: {
-      fail("${module_name} unsupported for ${::operatingsystem}.")
+  $service = $::osfamily ? {
+    'Debian' => 'slapd',
+    'Redhat' => $::lsbmajdistrelease ? {
+      5 => 'ldap',
+      6 => 'slapd',
     }
   }
 }

@@ -1,4 +1,4 @@
-# Define: ldap::server::openldap::domain
+# Define: openldap::server::openldap::domain
 #
 # This custom definition sets up all of the necessary configuration
 # Files to include custom schema in OpenLDAP. This uses the File-Fragment
@@ -19,32 +19,19 @@
 #
 # Sample Usage:
 # Server Configuration:
-# ldap::server::schema { 'websages':
+# openldap::server::schema { 'websages':
 #   ensure => 'present',
-#   source => 'puppet:///modules/ldap/schema/websages.schema',
+#   source => 'puppet:///modules/profile_openldap/schema/extra.schema',
 # }
-define ldap::server::schema(
-  $ensure = present,
-  $source = undef,
+define openldap::server::schema(
+  $source,
 ) {
-  include ::ldap::params
-
-  File {
-    owner   => 'root',
-    group   => $ldap::params::lp_daemon_group,
-    before  => Class['ldap::server::rebuild'],
-    require => Class['ldap::server::config'],
-  }
-
-  file { "${ldap::params::lp_tmp_dir}/schema.d/${name}.schema":
-    ensure  => $ensure,
-    content => "include ${ldap::params::lp_openldap_conf_dir}/schema/${name}.schema\n",
-    notify  => Class['ldap::server::rebuild'],
-  }
-
-  file { "${ldap::params::lp_openldap_conf_dir}/schema/${name}.schema":
-    ensure => $ensure,
+  file { "${::openldap::params::confdir}/schema/${name}.schema":
     source => $source,
-    notify => Class['ldap::server::service'],
+  }
+  concat::fragment { "openldap-schema-${name}":
+    target  => 'openldap-schemas',
+    content => "include ${::openldap::params::confdir}/schema/${name}.conf\n",
+    notify => Service[$::openldap::params::service],
   }
 }

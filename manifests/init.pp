@@ -15,7 +15,6 @@
 #  Packaged LDAP
 #    - RHEL: EPEL or custom package
 #    - Debian/Ubuntu: Default Install or custom package
-#    - SuSE: Default Install or custom package
 #
 # Sample Usage:
 #
@@ -44,57 +43,32 @@
 #   rootpw   => 'test',
 # }
 #
-# Client Configuration:
-# ldap::client::config { 'puppetlabs.test':
-#   ensure  => 'present',
-#   servers => 'server',
-#   ssl     => false,
-#   base_dn => 'dc=puppetlabs,dc=test',
-# }
-class ldap(
-  $client      = false,
-  $server      = false,
-  $ssl         = false,
-  $ssl_ca      = '',
-  $ssl_cert    = '',
-  $ssl_key     = '',
-  $cn_config   = false,
-  $rootdn      = undef,
-  $rootpw      = undef,
-) {
-  include stdlib
-  include ldap::params
-
-  # ensure relationships of contained classes
-  anchor { 'ldap::begin': } ->
-  anchor { 'ldap::begin::client': } ->
-  anchor { 'ldap::end::client': } ->
-  anchor { 'ldap::begin::server': } ->
-  anchor { 'ldap::end::server': } ->
-  anchor { 'ldap::end': }
-
-  # Client Specific Information
-  if $client {
-    class { 'ldap::client':
-      ensure  => 'present',
-      ssl     => $ssl,
-      require => Anchor['ldap::begin::client'],
-      before  => Anchor['ldap::end::client'],
-    }
+class openldap(
+  $client         = false,
+  $client_base    = undef,
+  $client_uri     = undef,
+  $server         = false,
+  $server_use_olc = false,
+  $server_rootdn  = undef,
+  $server_rootpw  = undef,
+  $ssl            = false,
+  $ssl_ca         = undef,
+  $ssl_cert       = undef,
+  $ssl_key        = undef,
+) inherits ::openldap::params {
+  class { '::openldap::client':
+    ssl       => $ssl,
+    ssl_ca    => $ssl_ca,
+    ssl_cert  => $ssl_cert,
+    ssl_key   => $ssl_key,
   }
-
-  # Server Specific Information
-  if $server {
-    class { 'ldap::server':
-      ssl       => $ssl,
-      ssl_ca    => $ssl_ca,
-      ssl_cert  => $ssl_cert,
-      ssl_key   => $ssl_key,
-      cn_config => $cn_config,
-      rootdn    => $rootdn,
-      rootpw    => $rootpw,
-      require   => Anchor['ldap::begin::server'],
-      before    => Anchor['ldap::end::server'],
-    }
+  class { '::openldap::server':
+    ssl       => $ssl,
+    ssl_ca    => $ssl_ca,
+    ssl_cert  => $ssl_cert,
+    ssl_key   => $ssl_key,
+    use_olc   => $server_use_olc,
+    rootdn    => $server_rootdn,
+    rootpw    => $server_rootpw,
   }
 }
