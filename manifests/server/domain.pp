@@ -59,10 +59,14 @@ define openldap::server::domain(
     owner   => $::openldap::params::user,
   } ~>
   exec { "openldap-bootstrap-${name}":
-    command   => "/usr/sbin/slapadd -b '${basedn}' -v -l ${::openldap::params::vardir}/${name}/base.ldif",
-    user      =>  $::openldap::params::user,
-    group     =>  $::openldap::params::group,
-    creates   => "${::openldap::params::vardir}/${name}/id2entry.bdb",
-    before    => Service[$::openldap::params::service],
+    command => "/usr/sbin/slapadd -b '${basedn}' -v -l ${::openldap::params::vardir}/${name}/base.ldif",
+    user    =>  $::openldap::params::user,
+    group   =>  $::openldap::params::group,
+    creates => "${::openldap::params::vardir}/${name}/id2entry.bdb",
+    require => [
+      Concat['openldap-domains'],
+      File["${::openldap::params::confdir}/slapd.d"],
+    ],
+    before  => Service[$::openldap::params::service],
   }
 }

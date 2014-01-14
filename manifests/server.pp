@@ -49,6 +49,10 @@ class openldap::server(
   file { "${::openldap::params::confdir}/schema":
     ensure  => directory,
   } ->
+  file { "${::openldap::params::confdir}/slapd.d":
+    ensure  => absent,
+    force   => true,
+  } ->
   service { $::openldap::params::service:
     ensure     => running,
     enable     => true,
