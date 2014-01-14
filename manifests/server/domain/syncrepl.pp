@@ -20,6 +20,5 @@ define openldap::server::domain::syncrepl (
     target  => "openldap-domains",
     content => template('openldap/server/syncrepl.conf.erb'),
     order   => "${domain}-20",
-    require => Openldap::Server::Domain[$domain],
   }
 }

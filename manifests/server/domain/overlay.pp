@@ -18,6 +18,5 @@ define openldap::server::domain::overlay (
     target  => "openldap-domains",
     content => template('openldap/server/overlay.conf.erb'),
     order   => "${domain}-30",
-    #require => Openldap::Server::Domain[$domain],
   }
 }
