@@ -13,14 +13,12 @@ index nisMapName,nisMapEntry            eq,pres,sub
 access to attrs=userPassword
     by self write
     by anonymous auth
-    by dn.base="<%= @rootdn %>,<%= @basedn %>" write
 <%- if @syncdn -%>
     by dn.base="<%= @syncdn %>,<%= @basedn %>" read
 <%- end -%>
     by * none
 access to *
     by self write
-    by dn.base="<%= @rootdn %>,<%= @basedn %>" write
 <%- if @syncdn -%>
     by dn.base="<%= @syncdn %>,<%= @basedn %>" read
 <%- end -%>
