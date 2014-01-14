@@ -8,6 +8,9 @@ include <%= scope['::openldap::params::confdir'] %>/schema/cosine.schema
 include <%= scope['::openldap::params::confdir'] %>/schema/nis.schema
 include <%= scope['::openldap::params::confdir'] %>/schema/inetorgperson.schema
 
+# include additional schemas
+include <%= scope['::openldap::params::confdir'] %>/schema.conf
+
 <%- if scope['::openldap::params::modulepath'] -%>
 modulepath <%= scope['::openldap::params::modulepath'] %>
   <%- if scope['::openldap::params::database'] == 'hdb' -%>
@@ -25,24 +28,29 @@ loglevel <%= scope['::openldap::params::loglevel'] %>
 sizelimit <%= scope['::openldap::params::sizelimit'] %>
 tool-threads <%= scope['::openldap::params::tool_threads'] %>
 
-# include all domains configured on this host
-include <%= scope['::openldap::params::confdir'] %>/domains.conf
-
-# include additional schemas
-include <%= scope['::openldap::params::confdir'] %>/schema.conf
+<%- @options.each do |key, value| -%>
+  <%= key %> <%= value %>
+<%- end -%>
 
 <%- if @ssl -%>
 TLSCACertificateFile <%= @ssl_ca %>
 TLSCertificateFile <%= @ssl_cert %>
 TLSCertificateKeyFile <%= @ssl_key %>
 <%- end -%>
+
 <%- if scope['::openldap::params::allow_bind_v2'] %>
 bind_v2
 <%- end -%>
+
 <%- if @use_olc -%>
 database config
 <%- end -%>
+
 <%- if @rootdn -%>
 rootdn "<%= @rootdn %>"
 rootpw <%= @rootpw %>
 <%- end -%>
+
+# include all domains configured on this host
+include <%= scope['::openldap::params::confdir'] %>/domains.conf
+
