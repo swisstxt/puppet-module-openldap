@@ -43,7 +43,7 @@ define openldap::server::domain(
     content => template('openldap/server/domain.conf.erb'),
     order   => "${name}-10",
     notify  => Service[$::openldap::params::service],
-  } ->
+  }
   file { "${::openldap::params::vardir}/${name}":
     ensure  => directory,
     owner   => $::openldap::params::user,
@@ -57,16 +57,12 @@ define openldap::server::domain(
   file { "${::openldap::params::vardir}/${name}/base.ldif":
     content => template('openldap/server/base.ldif.erb'),
     owner   => $::openldap::params::user,
-  } ~>
+  } ->
   exec { "openldap-bootstrap-${name}":
     command => "/usr/sbin/slapadd -b '${basedn}' -v -l ${::openldap::params::vardir}/${name}/base.ldif",
     user    =>  $::openldap::params::user,
     group   =>  $::openldap::params::group,
     creates => "${::openldap::params::vardir}/${name}/id2entry.bdb",
-    require => [
-      Concat['openldap-domains'],
-      File["${::openldap::params::confdir}/slapd.d"],
-    ],
     before  => Service[$::openldap::params::service],
-  }
+  } <- Concat <| tag == 'openldap::server' |>
 }

@@ -15,12 +15,11 @@
 define openldap::server::schema(
   $source,
 ) {
-  file { "${::openldap::params::confdir}/schema/${name}.schema":
-    source => $source,
-  }
   concat::fragment { "openldap-schema-${name}":
     target  => 'openldap-schemas',
-    content => "include ${::openldap::params::confdir}/schema/${name}.conf\n",
-    notify => Service[$::openldap::params::service],
+    content => "include ${::openldap::params::confdir}/schema/${name}\n",
   }
+  file { "${::openldap::params::confdir}/schema/${name}":
+    source  => $source,
+  } -> Concat <| tag == 'openldap::server' |>
 }

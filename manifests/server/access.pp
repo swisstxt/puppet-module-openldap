@@ -7,6 +7,5 @@ define openldap::server::access(
     target  => 'openldap-accesses',
     content => template('openldap/server/access.conf.erb'),
     order   => $order,
-    notify  => Service[$::openldap::params::service],
   }
 }
