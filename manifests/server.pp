@@ -1,6 +1,6 @@
 # Class: openldap::server
 #
-# This class manages OpenLDAP server cnfiguration
+# This class manages OpenLDAP server configuration
 #
 # Parameters:
 #

@@ -12,10 +12,6 @@
 # Requires:
 #  puppetlabs-stdlib - https://github.com/puppetlabs/puppetlabs-stdlib
 #
-#  Packaged LDAP
-#    - RHEL: EPEL or custom package
-#    - Debian/Ubuntu: Default Install or custom package
-#
 # Sample Usage:
 #
 # Setup (Bootstrap) and Configuration of this module are currently
@@ -23,24 +19,16 @@
 # and multiple LDAP Trees being managed.
 #
 # Bootstrap:
-# node 'server.puppetlabs.test' {
-#   class { 'ldap':
-#     server      => true,
-#     ssl         => false,
-#   }
-# }
-# node 'client.puppetlabs.test' {
-#   class {'ldap':
-#     client  => true,
-#     ssl     => false,
-#   }
+# class { '::openldap':
+#   server => true,
+#   ssl    => false,
 # }
 #
-# Server Configuration:
-# ldap::define::domain {'puppetlabs.test':
-#   basedn   => 'dc=puppetlabs,dc=test',
-#   rootdn   => 'cn=admin',
-#   rootpw   => 'test',
+# Domain Configuration:
+# ldap::server::domain {'example.com':
+#   basedn   => 'dc=exmaple,dc=com',
+#   rootdn   => 'cn=manager',
+#   rootpw   => '{SSHA}drdxGXBfu+Z5z/ZwCnfwafsInSnq9MnD', # slappasswd -h '{SSHA}'
 # }
 #
 class openldap(
@@ -67,8 +55,8 @@ class openldap(
     ssl_ca    => $ssl_ca,
     ssl_cert  => $ssl_cert,
     ssl_key   => $ssl_key,
-    use_olc   => $server_use_olc,
     rootdn    => $server_rootdn,
     rootpw    => $server_rootpw,
+    use_olc   => $server_use_olc,
   }
 }

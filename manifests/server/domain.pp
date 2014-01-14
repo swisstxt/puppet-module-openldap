@@ -6,9 +6,6 @@
 #
 # Parameters:
 #
-# *ensure* - (true|false) Enable or disable a configured tree. Disabled trees
-#            will not be deleted, but rather will remain on the file system
-#            for archival purposes.
 # *basedn* - Base DN for setting up the LDAP server.
 # *rootdn* - Base DN for the administrator acount on an LDAP server.
 # *rootpw* - Password for the administrator account. Will accept any valid
@@ -16,16 +13,13 @@
 #
 # Actions:
 #
-# This definition acts as a proxy class to various server implementations
-#
 # Requires:
 #
 # Sample Usage:
-# Server Configuration:
-# openldap::server::domain {'puppetlabs.test':
-#   basedn  => 'dc=puppetlabs,dc=test',
-#   rootdn  => 'cn=admin',
-#   rootpw  => 'test',
+# ldap::server::domain {'example.com':
+#   basedn   => 'dc=exmaple,dc=com',
+#   rootdn   => 'cn=manager',
+#   rootpw   => '{SSHA}drdxGXBfu+Z5z/ZwCnfwafsInSnq9MnD', # slappasswd -h '{SSHA}'
 # }
 define openldap::server::domain(
   $basedn,
