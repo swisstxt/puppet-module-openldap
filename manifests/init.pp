@@ -39,6 +39,7 @@ class openldap(
   $server_use_olc = false,
   $server_rootdn  = undef,
   $server_rootpw  = undef,
+  $server_options = {},
   $ssl            = false,
   $ssl_ca         = undef,
   $ssl_cert       = undef,
@@ -58,5 +59,6 @@ class openldap(
     rootdn    => $server_rootdn,
     rootpw    => $server_rootpw,
     use_olc   => $server_use_olc,
+    options   => $options,
   }
 }

@@ -18,6 +18,7 @@ class openldap::server(
   $use_olc  = undef,
   $rootdn   = undef,
   $rootpw   = undef,
+  $options  = {},
 ) {
   File {
     owner => root,
