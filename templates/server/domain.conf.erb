@@ -1,7 +1,7 @@
 database  <%= scope['::openldap::params::database'] %>
 suffix    "<%= @basedn %>"
 rootdn    "<%= @rootdn %>,<%= @basedn %>"
-rootpw    <%= @rootpw %>
+rootpw    "<%= @rootpw %>"
 directory <%= scope['::openldap::params::vardir'] %>/<%= @name %>
 
 index objectClass                       eq,pres

@@ -9,7 +9,7 @@ include <%= scope['::openldap::params::confdir'] %>/schema/nis.schema
 include <%= scope['::openldap::params::confdir'] %>/schema/inetorgperson.schema
 
 # include additional schemas
-include <%= scope['::openldap::params::confdir'] %>/schema.conf
+include <%= scope['::openldap::params::confdir'] %>/schemas.conf
 
 <%- if scope['::openldap::params::modulepath'] -%>
 modulepath <%= scope['::openldap::params::modulepath'] %>
