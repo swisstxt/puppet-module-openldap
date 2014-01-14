@@ -4,14 +4,27 @@
 # See ldap.conf(5) for details
 # This file should be world readable but not world writable.
 
-SIZELIMIT      <%= scope['ldap::params::client_sizelimit'] %>
-TIMELIMIT      <%= scope['ldap::params::client_timelimit'] %>
-DEREF          <%= scope['ldap::params::client_deref'] %>
+SIZELIMIT      <%= scope['::openldap::params::client_sizelimit'] %>
+TIMELIMIT      <%= scope['::openldap::params::client_timelimit'] %>
+DEREF          <%= scope['::openldap::params::client_deref'] %>
 
+<%- if @base -%>
 BASE <%= @base %>
+<%- end -%>
 
-<%- if ssl == 'true' -%>
+<%- if @uri -%>
 URI <%= @uri.join(' ') %>
 <%- end -%>
 
 TLS_CACERTDIR /etc/openldap/cacerts
+
+<%- if @tls_ca -%>
+TLS_CACERT <%= @tls_ca %>
+<%- end -%>
+<%- if @tls_cert -%>
+TLS_CERT <%= @tls_cert %>
+<%- end -%>
+<%- if @tls_key -%>
+TLS_KEY <%= @tls_key %>
+<%- end -%>
+

@@ -7,8 +7,6 @@ include <%= scope['::openldap::params::confdir'] %>/schema/core.schema
 include <%= scope['::openldap::params::confdir'] %>/schema/cosine.schema
 include <%= scope['::openldap::params::confdir'] %>/schema/nis.schema
 include <%= scope['::openldap::params::confdir'] %>/schema/inetorgperson.schema
-
-# include additional schemas
 include <%= scope['::openldap::params::confdir'] %>/schemas.conf
 
 <%- if scope['::openldap::params::modulepath'] -%>
@@ -23,7 +21,6 @@ moduleload  back_bdb
 
 pidfile	<%= scope['::openldap::params::rundir'] %>/slapd.pid
 argsfile <%= scope['::openldap::params::rundir'] %>/slapd.args
-
 loglevel <%= scope['::openldap::params::loglevel'] %>
 sizelimit <%= scope['::openldap::params::sizelimit'] %>
 tool-threads <%= scope['::openldap::params::tool_threads'] %>
@@ -32,18 +29,14 @@ tool-threads <%= scope['::openldap::params::tool_threads'] %>
   <%= key %> <%= value %>
 <%- end -%>
 
-<%- if @ssl -%>
-TLSCACertificateFile <%= @ssl_ca %>
-TLSCertificateFile <%= @ssl_cert %>
-TLSCertificateKeyFile <%= @ssl_key %>
+<%- if @tls_ca -%>
+TLSCACertificateFile <%= @tls_ca %>
 <%- end -%>
-
-<%- if scope['::openldap::params::allow_bind_v2'] %>
-bind_v2
+<%- if @tls_cert -%>
+TLSCertificateFile <%= @tls_cert %>
 <%- end -%>
-
-<%- if @use_olc -%>
-database config
+<%- if @tls_key -%>
+TLSCertificateKeyFile <%= @tls_key %>
 <%- end -%>
 
 <%- if @rootdn -%>
@@ -51,6 +44,5 @@ rootdn "<%= @rootdn %>"
 rootpw <%= @rootpw %>
 <%- end -%>
 
-# include all domains configured on this host
 include <%= scope['::openldap::params::confdir'] %>/domains.conf
 

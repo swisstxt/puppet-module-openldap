@@ -11,13 +11,11 @@
 # Sample Usage:
 #
 class openldap::server(
-  $ssl      = false,
-  $ssl_ca   = undef,
-  $ssl_cert = undef,
-  $ssl_key  = undef,
-  $use_olc  = undef,
   $rootdn   = undef,
   $rootpw   = undef,
+  $tls_ca   = undef,
+  $tls_cert = undef,
+  $tls_key  = undef,
   $options  = {},
 ) {
   File {

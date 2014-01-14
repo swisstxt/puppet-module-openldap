@@ -21,5 +21,6 @@ define openldap::server::schema(
   }
   file { "${::openldap::params::confdir}/schema/${name}":
     source  => $source,
+    require => File["${::openldap::params::confdir}/schema"],
   } -> Concat <| tag == 'openldap::server' |>
 }

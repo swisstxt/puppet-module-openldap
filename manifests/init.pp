@@ -5,7 +5,6 @@
 # Parameters:
 # *client* - Boolean flag (true|false) to configure an LDAP Client
 # *server* - Boolean flag (true|false) to configure an LDAP Server
-# *ssl*    - Boolean flag (true|false) to enable SSL Support
 #
 # Actions:
 #
@@ -21,7 +20,6 @@
 # Bootstrap:
 # class { '::openldap':
 #   server => true,
-#   ssl    => false,
 # }
 #
 # Domain Configuration:
@@ -32,33 +30,35 @@
 # }
 #
 class openldap(
-  $client         = false,
-  $client_base    = undef,
-  $client_uri     = undef,
-  $server         = false,
-  $server_use_olc = false,
-  $server_rootdn  = undef,
-  $server_rootpw  = undef,
-  $server_options = {},
-  $ssl            = false,
-  $ssl_ca         = undef,
-  $ssl_cert       = undef,
-  $ssl_key        = undef,
+  $client          = false,
+  $client_base     = undef,
+  $client_uri      = undef,
+  $client_tls_ca   = undef,
+  $client_tls_cert = undef,
+  $client_tls_key  = undef,
+  $server          = false,
+  $server_rootdn   = undef,
+  $server_rootpw   = undef,
+  $server_options  = {},
+  $server_tls_ca   = undef,
+  $server_tls_cert = undef,
+  $server_tls_key  = undef,
 ) inherits ::openldap::params {
-  class { '::openldap::client':
-    ssl       => $ssl,
-    ssl_ca    => $ssl_ca,
-    ssl_cert  => $ssl_cert,
-    ssl_key   => $ssl_key,
+  if $client {
+    class { '::openldap::client':
+      tls_ca    => $client_tls_ca,
+      tls_cert  => $client_tls_cert,
+      tls_key   => $client_tls_key,
+    }
   }
-  class { '::openldap::server':
-    ssl       => $ssl,
-    ssl_ca    => $ssl_ca,
-    ssl_cert  => $ssl_cert,
-    ssl_key   => $ssl_key,
-    rootdn    => $server_rootdn,
-    rootpw    => $server_rootpw,
-    use_olc   => $server_use_olc,
-    options   => $options,
+  if $server {
+    class { '::openldap::server':
+      rootdn    => $server_rootdn,
+      rootpw    => $server_rootpw,
+      tls_ca    => $server_tls_ca,
+      tls_cert  => $server_tls_cert,
+      tls_key   => $server_tls_key,
+      options   => $options,
+    }
   }
 }

@@ -15,14 +15,16 @@
 class openldap::client(
   $base     = undef,
   $uri      = undef,
-  $ssl      = false,
-  $ssl_ca   = undef,
-  $ssl_cert = undef,
-  $ssl_key  = undef,
+  $tls_ca   = undef,
+  $tls_cert = undef,
+  $tls_key  = undef,
 ) {
   package { $::openldap::params::client_package:
     ensure => present,
   } ->
+  file{ '/etc/openldap':
+    ensure => directory,
+  }
   file { '/etc/openldap/ldap.conf':
     content => template('openldap/client/ldap.conf.erb'),
   }

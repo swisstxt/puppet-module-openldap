@@ -24,7 +24,6 @@ class openldap::params {
   }
 
   # server
-  $allow_bind_v2 = false
   $loglevel = 8
   $sizelimit = 5000
   $tool_threads = 1

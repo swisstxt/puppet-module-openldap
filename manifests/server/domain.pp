@@ -35,7 +35,6 @@ define openldap::server::domain(
     owner   => 'root',
     group   => $::openldap::params::group,
     mode    => '0640',
-    require => Package[$::openldap::params::package],
   }
 
   concat::fragment { "openldap-domain-${name}":
@@ -44,6 +43,8 @@ define openldap::server::domain(
     order   => "${name}-10",
     notify  => Service[$::openldap::params::service],
   }
+
+  Package[$::openldap::params::package] ->
   file { "${::openldap::params::vardir}/${name}":
     ensure  => directory,
     owner   => $::openldap::params::user,
