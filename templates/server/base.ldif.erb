@@ -6,13 +6,6 @@ o: <%= @name %>
 dc: <%= @basedn[/^dc=([^,]+)/, 1] %>
 description: <%= @name %>
 
-dn: <%= @rootdn %>,<%= @basedn %>
-roleOccupant: <%= @basedn %>
-objectClass: simpleSecurityObject
-objectClass: organizationalRole
-cn: <%= @rootdn.gsub!(/^..=/, '') %>
-description: LDAP Manager
-userPassword: <%= @rootpw %>
 
 <% if @readdn -%>
 dn: <%= @readdn %>,<%= @basedn %>
