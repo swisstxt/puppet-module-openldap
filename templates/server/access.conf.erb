@@ -1,5 +1,6 @@
-access to <%= @what %>
-<% @grants.each do |grant| -%>
+<%- @what.each do |what| -%>
+access to <%= what %>
+  <% @grants.each do |grant| -%>
     by <%= grant %>
-<% end -%>
-
+  <% end -%>
+<%- end -%>
