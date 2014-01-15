@@ -14,7 +14,7 @@ define openldap::server::domain::syncrepl (
   $domain,
   $rid,
   $options = {},
-  $mirror_mode = false,
+  $mirrormode = false,
 ) {
   concat::fragment { "openldap-domain-${domain}-syncrepl":
     target  => "openldap-domains",

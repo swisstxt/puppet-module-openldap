@@ -58,7 +58,7 @@ class openldap(
       tls_ca    => $server_tls_ca,
       tls_cert  => $server_tls_cert,
       tls_key   => $server_tls_key,
-      options   => $options,
+      options   => $server_options,
     }
   }
 }
