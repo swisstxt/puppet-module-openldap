@@ -30,11 +30,12 @@ define openldap::server::domain(
   $syncdn = undef,
   $syncpw = undef,
   $anonymous_read = true,
+  $backup = false,
 ) {
   File {
-    owner   => 'root',
+    owner   => $::openldap::params::user,
     group   => $::openldap::params::group,
-    mode    => '0640',
+    mode    => '0600',
   }
 
   concat::fragment { "openldap-domain-${name}":
@@ -66,4 +67,19 @@ define openldap::server::domain(
     creates => "${::openldap::params::vardir}/${name}/id2entry.bdb",
     before  => Service[$::openldap::params::service],
   } <- Concat <| tag == 'openldap::server' |>
+
+  if $backup {
+    file { "${::openldap::params::vardir}/$name/backup":
+      ensure => directory,
+      user => $::openldap::params::user,
+      group => $::openldap::params::group,
+      require => File[$::openldap::params::vardir],
+    }
+    ::cron::crond { "openldap-${name}-backup":
+      command => "slapcat -b "${basedn}" | gzip -9 > ${::openldap::params::vardir}/backup.ldif",
+      user    => $::openldap::params::user,
+      $minute => '25',
+      $hour   => '23',
+    }
+  }
 }
