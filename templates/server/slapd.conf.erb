@@ -26,7 +26,7 @@ sizelimit <%= scope['::openldap::params::sizelimit'] %>
 tool-threads <%= scope['::openldap::params::tool_threads'] %>
 
 <%- @options.each do |key, value| -%>
-  <%= key %> <%= value %>
+<%= key %> <%= value %>
 <%- end -%>
 
 <%- if @tls_ca -%>
