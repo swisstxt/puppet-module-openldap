@@ -14,8 +14,8 @@
 #
 class openldap::params {
   # client
-  $client_sizelimit = 12
-  $client_timelimit = 15
+  $client_sizelimit = 0
+  $client_timelimit = 0
   $client_deref = 'never'
 
   $client_package = $::osfamily ? {
