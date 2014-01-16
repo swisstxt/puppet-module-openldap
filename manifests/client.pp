@@ -24,7 +24,7 @@ class openldap::client(
   } ->
   file{ '/etc/openldap':
     ensure => directory,
-  }
+  } ->
   file { '/etc/openldap/ldap.conf':
     content => template('openldap/client/ldap.conf.erb'),
   }
