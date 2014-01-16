@@ -27,3 +27,6 @@ access to *
 <%- end -%>
     by * <%= @anonymous_read ? 'read' : 'none' %>
 
+<%- @options.keys.sort.each do |key| -%>
+<%= key %> <%= @options[key] %>
+<%- end -%>

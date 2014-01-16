@@ -31,6 +31,7 @@ define openldap::server::domain(
   $syncpw = undef,
   $anonymous_read = true,
   $backup = false,
+  $options = {},
 ) {
   File {
     owner   => $::openldap::params::user,
