@@ -1,7 +1,7 @@
 index entryCSN,entryUUID eq
 syncrepl rid=<%= @rid %>
-<% @options.each do |key, value| -%>
-        <%= key %>="<%= value %>"
+<% @options.keys.sort.each do |key| -%>
+        <%= key %>="<%= @options[key] %>"
 <% end -%>
 <%= 'mirrormode on' if @mirrormode %>
 

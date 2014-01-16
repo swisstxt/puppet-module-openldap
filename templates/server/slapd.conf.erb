@@ -25,8 +25,8 @@ loglevel <%= scope['::openldap::params::loglevel'] %>
 sizelimit <%= scope['::openldap::params::sizelimit'] %>
 tool-threads <%= scope['::openldap::params::tool_threads'] %>
 
-<%- @options.each do |key, value| -%>
-<%= key %> <%= value %>
+<%- @options.keys.sort.each do |key| -%>
+<%= key %> <%= @options[key] %>
 <%- end -%>
 
 <%- if @tls_ca -%>
