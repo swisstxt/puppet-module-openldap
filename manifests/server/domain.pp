@@ -43,7 +43,6 @@ define openldap::server::domain(
     target  => 'openldap-domains',
     content => template('openldap/server/domain.conf.erb'),
     order   => "${name}-10",
-    notify  => Service[$::openldap::params::service],
   }
 
   Package[$::openldap::params::package] ->
@@ -72,15 +71,15 @@ define openldap::server::domain(
   if $backup {
     file { "${::openldap::params::vardir}/$name/backup":
       ensure => directory,
-      user => $::openldap::params::user,
+      owner => $::openldap::params::user,
       group => $::openldap::params::group,
-      require => File[$::openldap::params::vardir],
+      require => Package[$::openldap::params::package],
     }
-    ::cron::crond { "openldap-${name}-backup":
-      command => "slapcat -b "${basedn}" | gzip -9 > ${::openldap::params::vardir}/backup.ldif",
+    ::cron::crond { "openldap-backup-${name}":
+      command => "/usr/sbin/slapcat -b '${basedn}' | gzip -9 > ${::openldap::params::vardir}/backup.ldif.gz",
       user    => $::openldap::params::user,
-      $minute => '25',
-      $hour   => '23',
+      minute => '25',
+      hour   => '23',
     }
   }
 }
