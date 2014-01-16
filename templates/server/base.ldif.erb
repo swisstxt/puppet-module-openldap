@@ -6,7 +6,6 @@ o: <%= @name %>
 dc: <%= @basedn[/^dc=([^,]+)/, 1] %>
 description: <%= @name %>
 
-
 <% if @readdn -%>
 dn: <%= @readdn %>,<%= @basedn %>
 roleOccupant: <%= @basedn %>
@@ -26,11 +25,3 @@ cn: <%= @syncdn.gsub!(/^..=/, '') %>
 description: LDAP Sync
 userPassword: <%= @syncpw %>
 <% end -%>
-
-dn: ou=users,<%= @basedn %>
-objectClass: organizationalUnit
-ou: uses
-
-dn: ou=groups,<%= @basedn %>
-objectClass: organizationalUnit
-ou: groups
