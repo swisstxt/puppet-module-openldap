@@ -44,5 +44,5 @@ rootdn "<%= @rootdn %>"
 rootpw <%= @rootpw %>
 <%- end -%>
 
+include <%= scope['::openldap::params::confdir'] %>/accesses.conf
 include <%= scope['::openldap::params::confdir'] %>/domains.conf
-
