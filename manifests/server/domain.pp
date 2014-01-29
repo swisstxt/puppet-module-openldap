@@ -33,32 +33,31 @@ define openldap::server::domain(
   $backup = false,
   $options = {},
 ) {
-  File {
-    owner   => $::openldap::params::user,
-    group   => $::openldap::params::group,
-    mode    => '0600',
-  }
-
+  Package[$::openldap::params::package] ->
   concat::fragment { "openldap-domain-${name}":
     target  => 'openldap-domains',
     content => template('openldap/server/domain.conf.erb'),
     order   => "${name}-10",
-  }
-
-  Package[$::openldap::params::package] ->
+  } ->
   file { "${::openldap::params::vardir}/${name}":
     ensure  => directory,
-    owner   => $::openldap::params::user,
     recurse => true,
+    owner   => $::openldap::params::user,
+    group   => $::openldap::params::group,
+    mode    => '0600',
   } ->
   file { "${::openldap::params::vardir}/${name}/DB_CONFIG":
     content => template('openldap/server/DB_CONFIG.erb'),
     owner   => $::openldap::params::user,
+    group   => $::openldap::params::group,
+    mode    => '0600',
     notify  => Service[$::openldap::params::service],
   } ->
   file { "${::openldap::params::vardir}/${name}/base.ldif":
     content => template('openldap/server/base.ldif.erb'),
     owner   => $::openldap::params::user,
+    group   => $::openldap::params::group,
+    mode    => '0600',
   } ->
   exec { "openldap-bootstrap-${name}":
     command => "/usr/sbin/slapadd -b '${basedn}' -v -l ${::openldap::params::vardir}/${name}/base.ldif",
@@ -71,8 +70,9 @@ define openldap::server::domain(
   if $backup {
     file { "${::openldap::params::vardir}/$name/backup":
       ensure => directory,
-      owner => $::openldap::params::user,
-      group => $::openldap::params::group,
+      owner   => $::openldap::params::user,
+      group   => $::openldap::params::group,
+      mode    => '0600',
       require => Package[$::openldap::params::package],
     }
     ::cron::crond { "openldap-backup-${name}":
