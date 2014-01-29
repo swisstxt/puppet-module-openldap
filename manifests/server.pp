@@ -58,13 +58,13 @@ class openldap::server(
     group => $::openldap::params::group,
     mode  => '0640',
   } ~>
-  rsyslog::snippet { 'slapd':
-    content => 'local4.*  /var/log/slapd.log',
-  } ~>
   service { $::openldap::params::service:
     ensure     => running,
     enable     => true,
     hasstatus  => true,
     hasrestart => true,
+  } ->
+  rsyslog::snippet { 'slapd':
+    content => 'local4.*  /var/log/slapd.log',
   }
 }
