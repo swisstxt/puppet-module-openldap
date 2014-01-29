@@ -10,23 +10,7 @@ index uidNumber,gidNumber,loginShell    eq,pres
 index cn,uid,memberUid                  eq,pres,approx,sub
 index nisMapName,nisMapEntry            eq,pres,sub
 
-access to attrs=userPassword
-    by self write
-    by anonymous auth
-<%- if @syncdn -%>
-    by dn.base="<%= @syncdn %>,<%= @basedn %>" read
-<%- end -%>
-    by * none
-access to *
-    by self write
-<%- if @syncdn -%>
-    by dn.base="<%= @syncdn %>,<%= @basedn %>" read
-<%- end -%>
-<%- if @readdn -%>
-    by dn.base="<%= @readdn %>,<%= @basedn %>" read
-<%- end -%>
-    by * <%= @anonymous_read ? 'read' : 'none' %>
-
 <%- @options.keys.sort.each do |key| -%>
 <%= key %> <%= @options[key] %>
 <%- end -%>
+

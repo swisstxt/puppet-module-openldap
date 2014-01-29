@@ -39,6 +39,11 @@ define openldap::server::domain(
     content => template('openldap/server/domain.conf.erb'),
     order   => "${name}-10",
   } ->
+  concat::fragment { "openldap-accesses-${name}-base":
+    target  => 'openldap-domains',
+    content => template('openldap/server/access-domain-base.conf.erb'),
+    order   => "${name}-12-99",
+  } ->
   file { "${::openldap::params::vardir}/${name}":
     ensure  => directory,
     recurse => true,
