@@ -17,7 +17,7 @@ URI <%= @uri.join(' ') %>
 <%- end -%>
 
 TLS_CACERTDIR /etc/openldap/cacerts
-
+TLS_REQCERT allow
 <%- if @tls_ca -%>
 TLS_CACERT <%= @tls_ca %>
 <%- end -%>
@@ -27,4 +27,3 @@ TLS_CERT <%= @tls_cert %>
 <%- if @tls_key -%>
 TLS_KEY <%= @tls_key %>
 <%- end -%>
-
